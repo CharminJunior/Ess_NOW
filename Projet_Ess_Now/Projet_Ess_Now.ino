@@ -1,23 +1,27 @@
 #include <UOS.h>
 
+const int LED_PIN = 21;
+int brightness = 0, fadeAmount = 1;
+bool stopped = false;
+
 int xy = 0;
 int T1 = 30;
 bool Manu_on = 0;
 int b = 0;
 int j = 0;
 
+int led = 4; // led
+
 int intmanu(int y) {
   int x = (-(y * y) * 0.01) + 50;
   return x;
 }
 
-int t = 4; // ความยาว manu
+int t = 2; // ความยาว manu
 // 30 - (10 * t)
 // สมมติว่ามี array เมนูเก็บข้อความไว้
 const char* manu[] = { // (30 + (-1 * t)) / 10 // สูตรหาเมนู
   "Home",
-  "Time",
-  "Creator",
   "Settings",
   "Sleep"
 };
@@ -75,14 +79,19 @@ void setup() {
   // put your setup code here, to run once:
   p.b(115200, 1106);
 
+  outD(led, 0);
+  outD(21, 0);
+
   p.text("Hello!!");
 
-  p.SF(2);
+  p.SF(7);
   p.clear();
-  p.oled(2, 7, "!Hello ESP!");
+  p.oled(36, 35, "ESPOS");
+  p.SF(2);
+  p.oled(1, 62, "V1");
   p.show();
 
-  delay(1000);
+  delay(2500);
 
 }
 

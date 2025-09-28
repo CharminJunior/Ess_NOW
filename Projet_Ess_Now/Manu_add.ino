@@ -4,15 +4,9 @@ void contonManu(int x) {
       Home();
       break;
     case 1:
-      Time();
-      break;
-    case 2:
-      Creator();
-      break;
-    case 3:
       Settings();
       break;
-    case 4:
+    case 2:
       Sleep();
       break;
   }
@@ -24,28 +18,6 @@ void Home() {
   p.show();
   p.SF(2);
   //delay(500);
-
-  while(!btn(3));
-  while(btn(3));
-}
-
-void Time() {
-  //p.show();
-  p.SF(7);
-  p.oled(76, 18, "Home");
-  p.show();
-  p.SF(2);
-
-  while(!btn(3));
-  while(btn(3));
-}
-
-void Creator() {
-  //p.show();
-  p.SF(7);
-  p.oled(76, 18, "Home");
-  p.show();
-  p.SF(2);
 
   while(!btn(3));
   while(btn(3));
@@ -77,10 +49,10 @@ void Setoled_Settings(int x, int y) {
   p.move(29, 0);
   if(mode[1] == 1) {
     p.oled("N");
-    outD(4, 1);
+    outD(led, 1);
   }else if(mode[1] == 0) {
     p.oled("F");
-    outD(4, 0);
+    outD(led, 0);
   }
   p.move(-29, 0);
 
@@ -92,8 +64,6 @@ void Setoled_Settings(int x, int y) {
 
 void Settings() {
   while(!btn(3)) {
-    Setoled_Settings(72, 13 + b);
-
     if (btn(2) && j != 1) {
       if(mode[0] != 4) {
         for (int i = 0; i >= -12; i -= mode_0[mode[0]]) {   // ✅ แก้ i++ 
@@ -129,9 +99,21 @@ void Settings() {
         }
       }else if(j == 1) {
         mode[1] = !mode[1];
+        if(mode[1] == 1) {
+          for(int i = 0; i <= 255; i++) {
+            pwm(led, i);
+            delay(2);
+          }
+        }else if(mode[1] == 0) {
+          for(int i = 255; i >= 0; i--) {
+            pwm(led, i);
+            delay(2);
+          }
+        }
       }
       while(btn(1));
     }
+    Setoled_Settings(72, 13 + b);
   }
   //while(!btn(3));
   while(btn(3));
@@ -143,6 +125,18 @@ void Sleep() {
   p.oled(1, 12, "Sleep...");
   p.show();
 
-  while(!btn(3));
+  while(!stopped) {
+    analogWrite(LED_PIN, brightness);
+    brightness += fadeAmount;
+    if (brightness <= 0 || brightness >= 255) fadeAmount = -fadeAmount;
+    delay(10); // ความเร็วของ fade
+    if (btn(3)) {
+      stopped = true;
+      analogWrite(LED_PIN, 0);
+    }
+  }
+
+  //while(!btn(3));
   while(btn(3));
+  stopped = false;
 }
